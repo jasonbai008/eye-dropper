@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <title>小鸡拾色 </title>
+
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrapper {
+            text-align: center;
+            transform: translateY(-10vh);
+        }
+
+        #root {
+            height: 250px;
+            filter: drop-shadow(6px 6px 6px rgba(0, 0, 0, 0.2))
+        }
+
+        button {
+            padding: 5px 10px;
+            letter-spacing: 1px;
+        }
+
+        #result {
+            text-align: center;
+        }
+    </style>
+    <script src="lottie.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- 动画容器 -->
+        <div id="root"></div>
+        <!-- 取色按钮 -->
+        <section>
+            <button id="start-button">打开拾色器</button>
+            <p id="result"></p>
+        </section>
+    </div>
+
+    <script>
+        // 动画设置
+        let animData = {
+            wrapper: document.getElementById("root"),
+            animType: "svg", // html,canvas,svg
+            loop: true,
+            prerender: true,
+            autoplay: true,
+            path: "logo.json", // 动画JSON文件，在官网下载
+        };
+        // 加载动画
+        let anim = bodymovin.loadAnimation(animData);
+
+        const resultElement = document.getElementById("result");
+        const body = document.querySelector("body");
+
+        document.getElementById("start-button").addEventListener("click", () => {
+            if (!window.EyeDropper) {
+                resultElement.textContent = "你的浏览器不支持 EyeDropper API";
+                return;
+            }
+            // 拾色器逻辑
+            const eyeDropper = new EyeDropper();
+            eyeDropper
+                .open()
+                .then((result) => {
+                    resultElement.textContent = result.sRGBHex;
+                    body.style.backgroundColor = result.sRGBHex;
+                    navigator.clipboard.writeText(result.sRGBHex)
+                })
+                .catch((e) => console.log(e));
+        });
+
+    </script>
+</body>
+
+</html>
